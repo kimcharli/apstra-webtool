@@ -1,0 +1,29 @@
+
+[project]
+name = "apstra-webtool"
+version = "0.0.1"
+dependencies = [
+  'reactpy[fastapi]',
+]
+
+[project.scripts]
+#webtool = "webtool:hello_world"
+webtool = "webtool:main"
+
+
+[tool.poetry]
+name = "apstra-webtool"
+version = "0.0.1"
+description = "Webtool for Apstra"
+authors = ["Charlie Kim <kimcharli@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+reactpy = {extras = ["fastapi"], version = "^1.0.2"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
