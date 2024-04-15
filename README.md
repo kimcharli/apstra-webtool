@@ -15,7 +15,7 @@ uv pip install -e .
 
 ```sh
 source .venv/bin/activate
-uvicorn webtool.main:app
+python -m uvicorn webtool.main:app --reload
 ```
 
 
