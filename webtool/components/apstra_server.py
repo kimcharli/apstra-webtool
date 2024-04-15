@@ -44,17 +44,17 @@ def ApstraServerComponent():
 
     @event(prevent_default=True)
     async def handle_login(event):
-        # async with aiohttp.ClientSession('http://localhost:8000') as session:
-        #     async with session.post(
-        #         f"/login",
         try:
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession('http://localhost:8000') as session:
                 async with session.post(
-                    f"http://localhost:8000/login",
+                    f"/login",
+            # async with aiohttp.ClientSession() as session:
+            #     async with session.post(
+            #         f"http://localhost:8000/login",
                     json={"host": apstra_host, "port": apstra_port, "username": apstra_user, "password": apstra_password},
                 ) as response:
                     # assert await response.status == 200
-                    # response.raise_for_status()
+                    response.raise_for_status()
                     data = await response.json()
                     set_apstra_version(data["version"])
                     set_apstra_status(data["status"])

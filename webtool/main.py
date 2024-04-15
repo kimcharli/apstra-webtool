@@ -23,7 +23,7 @@ the_title[0]['children'] = [The_Title]
 # logging.error(f"after {options.head=}")
 
 app = FastAPI()
-# app.mount("/public", StaticFiles(directory="webtool/public"), name="public")
+app.mount("/public", StaticFiles(directory="webtool/public"), name="public")
 
 config = uvicorn.Config(app, host='localhost', port=8001, log_level='debug', reload=True)
 
@@ -64,17 +64,17 @@ async def login(login_data: LoginData):
         return {"status": str(e), "version": ""}
 
 
-# css_1 = html.link(
-#         {
-#         "rel": "stylesheet",
-#         "href": "/public/style.css"
-#         }
-#     )
+css_1 = html.link(
+        {
+        "rel": "stylesheet",
+        "href": "/public/style.css"
+        }
+    )
 
 @component
 def home():
     return html.section(
-        # css_1,
+        css_1,
         html.h1("Apstra Webtool"),
         # TodoList(),
         # Gallery(),
