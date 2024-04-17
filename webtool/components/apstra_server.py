@@ -64,7 +64,9 @@ def ApstraServerComponent():
     return html.form(
         html.button({"type": "submit", "on_click": handle_login}, "Login"),
         html.table(
-            {"style": {"border": "1px solid black"}},
+            {   "style": {"border": "1px solid black"}, 
+                "class_name": "border1"
+            },
             html.tr(
                 html.th("Version"),
                 html.th("Status"),

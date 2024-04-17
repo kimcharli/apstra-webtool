@@ -8,9 +8,6 @@ import os
 from typing import Annotated
 from pydantic import BaseModel
 
-# from webtool.components.todo_list import TodoList
-# from webtool.components.gallery import Gallery
-# from webtool.components.snapshot import Snapshot
 from webtool.components.apstra_server import ApstraServerComponent, ApstraServer
 
 
@@ -76,11 +73,10 @@ def home():
     return html.section(
         css_1,
         html.h1("Apstra Webtool"),
-        # TodoList(),
-        # Gallery(),
-        # Snapshot(),
         html.hr(),
         ApstraServerComponent(),
+        html.hr(),
+        html.hr(),
         )
 
 # configure(app, home, options)

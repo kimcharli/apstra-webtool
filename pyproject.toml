@@ -4,6 +4,7 @@ name = "apstra-webtool"
 version = "0.0.1"
 dependencies = [
   'reactpy[fastapi]',
+  'ck-apstra-api',
 ]
 
 [project.scripts]
