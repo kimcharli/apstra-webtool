@@ -1,7 +1,0 @@
-Metadata-Version: 2.1
-Name: apstra-webtool
-Version: 0.0.1
-License-File: LICENSE
-Requires-Dist: reactpy[fastapi]
-Requires-Dist: ck-apstra-api
-Requires-Dist: python-multipart

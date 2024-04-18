@@ -1,3 +1,0 @@
-reactpy[fastapi]
-ck-apstra-api
-python-multipart

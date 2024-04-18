@@ -3,9 +3,9 @@
 name = "apstra-webtool"
 version = "0.0.1"
 dependencies = [
-  'reactpy[fastapi]',
   'ck-apstra-api',
   'python-multipart',
+  'nicegui'
 ]
 
 [project.scripts]
@@ -23,14 +23,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "<3.13,>=3.11"
-reactpy = {extras = ["fastapi"], version = "^1.0.2"}
 aiohttp = "^3.9.4"
 python-multipart = "^0.0.9"
 ck-apstra-api = "^0.2.21"
+nicegui = "^1.4.22"
 
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-#requires = ["setuptools"]
-#build-backend = "setuptools.build_meta"
+#requires = ["poetry-core"]
+#build-backend = "poetry.core.masonry.api"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
