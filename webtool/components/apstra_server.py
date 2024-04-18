@@ -213,3 +213,5 @@ def content() -> None:
             ui.label('Login')
             ui.image('/public/login.svg').classes('rounded-full w-8 h-8 ml-4')
             # ui.button('Login', on_click=lambda: ui.notify('Login clicked')).classes('col-span-6 text-white bg-blue-500 border p-1')
+    
+    ui.separator()
