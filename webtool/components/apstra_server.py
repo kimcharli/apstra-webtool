@@ -143,23 +143,25 @@ class ApstraServer:
     password: str =  'zaq1@WSXcde3$RFV'
     logging_level = 'DEBUG'
     # apstra_server = None  # CkApstraSession
-    version: str = None
-    status: str = None
+    version: str = 'NA'
+    status: str = 'not connected'
 
     # @classmethod
-    def login(self, host, port, username, password) -> Tuple[Optional[CkApstraSession], Optional[Any]]:
+    # def login(self, host, port, username, password) -> Tuple[Optional[CkApstraSession], Optional[Any]]:
+    def login(self) -> Tuple[Optional[CkApstraSession], Optional[Any]]:
         """
         Login to the ApstraServer and return version and the error message
         """
-        self.apstra_server = CkApstraSession(host, port, username, password)
+        # self.apstra_server = CkApstraSession(host, port, username, password)
+        self.apstra_server = CkApstraSession(self.host, self.port, self.username, self.password)
         self.version = self.apstra_server.version
         self.status = self.apstra_server.last_error or "ok"
         if self.apstra_server.last_error:
             return self.apstra_server.version, self.apstra_server.last_error
-        self.host = host
-        self.port = port
-        self.username = username
-        self.password = password
+        # self.host = host
+        # self.port = port
+        # self.username = username
+        # self.password = password
         logging.warning(f"ApstraServer::login {ApstraServer=}")
         return self.apstra_server.version, "ok"    
 
@@ -177,12 +179,13 @@ def disable(button: ui.button):
 async def login(button: ui.button) -> None:
     with disable(button):
         async with httpx.AsyncClient() as client:
-            response = await client.post('http://localhost:8000/login', json={
-                'host': apstra_server.host,
-                'port': apstra_server.port,
-                'username': apstra_server.username,
-                'password': apstra_server.password,
-            })
+            response = await client.get('http://localhost:8000/login')
+            # response = await client.post('http://localhost:8000/login', json={
+            #     'host': apstra_server.host,
+            #     'port': apstra_server.port,
+            #     'username': apstra_server.username,
+            #     'password': apstra_server.password,
+            # })
             ui.notify(f'Response code: {response.status_code}')
 
 
@@ -199,12 +202,12 @@ def content() -> None:
         ui.label('Username').classes('font-bold border p-1')
         ui.label('Password').classes('font-bold border p-1')
 
-        ui.input(apstra_server.version).classes('border p-1').bind_value(apstra_server, 'version')
-        ui.input(apstra_server.status).classes('border p-1').bind_value(apstra_server, 'status')
-        ui.input(value='10.85.192.50').classes('border p-1').bind_value(apstra_server, 'host')
-        ui.input(value='443').classes('border p-1').bind_value(apstra_server, 'port')
-        ui.input(value='admin').classes('border p-1').bind_value(apstra_server, 'username')
-        ui.input(password=True, password_toggle_button=True, value='zaq1@WSXcde3$RFV').classes('border p-1').bind_value(apstra_server, 'password')
+        ui.input().classes('border p-1').bind_value(apstra_server, 'version')
+        ui.input().classes('border p-1').bind_value(apstra_server, 'status')
+        ui.input().classes('border p-1').bind_value(apstra_server, 'host')
+        ui.input().classes('border p-1').bind_value(apstra_server, 'port')
+        ui.input().classes('border p-1').bind_value(apstra_server, 'username')
+        ui.input(password=True, password_toggle_button=True).classes('border p-1').bind_value(apstra_server, 'password')
 
         with ui.button(on_click=lambda e: login(e.sender)):
             ui.label('Login')

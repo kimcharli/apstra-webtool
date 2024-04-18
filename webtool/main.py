@@ -204,24 +204,41 @@ class LoginData:
     username: str
     password: str
 
-@app.post("/login")
+# @app.post("/login")
+# # async def login(host: Annotated[str, Form()], port: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()]):
+# async def login(login_data: LoginData):
+#     """
+#     login to the server
+#     """
+#     try:
+#         logging.warning(f"login {login_data=}")
+#         # async for chunk in request.stream():
+#         #     print(chunk)
+#         # logging.warning(f"login {host=} {port=} {username=} {password=}")
+#         version, status = apstra_server.apstra_server.login(login_data.host, login_data.port, login_data.username, login_data.password)
+#         logging.warning(f"login {status=} {version=}")
+#         return {"status": status, "version": version}
+#     except Exception as e:
+#         logging.error(f"login {e=}")
+#         return {"status": str(e), "version": ""}
+
+@app.get("/login")
 # async def login(host: Annotated[str, Form()], port: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()]):
-async def login(login_data: LoginData):
+async def login():
     """
     login to the server
     """
     try:
-        logging.warning(f"login {login_data=}")
+        logging.warning(f"login begin")
         # async for chunk in request.stream():
         #     print(chunk)
         # logging.warning(f"login {host=} {port=} {username=} {password=}")
-        version, status = apstra_server.apstra_server.login(login_data.host, login_data.port, login_data.username, login_data.password)
+        version, status = apstra_server.apstra_server.login()
         logging.warning(f"login {status=} {version=}")
         return {"status": status, "version": version}
     except Exception as e:
         logging.error(f"login {e=}")
         return {"status": str(e), "version": ""}
-
 
 
 
