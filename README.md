@@ -6,13 +6,19 @@
 ```sh
 uv venv
 source .venv/bin/activate
-peoety install
+uv pip install -e .
 ```
 
 
 # run
 
 
+```sh
+source .venv/bin/activate
+uvicorn webtool.main:app --reload
+```
+
+or
 ```sh
 source .venv/bin/activate
 python -m uvicorn webtool.main:app --reload
