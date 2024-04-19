@@ -1,0 +1,4 @@
+﻿blueprint,label,ae,cts,speed,tags,server_intf,switch,switch_intf
+terra,single-home-1,,vn20,10g,single,eth0,server_1,xe-0/0/11
+terra,dual-home-1,1,"vn20,vn101",10g,dual,eth0,server_1,xe-0/0/12
+terra,dual-home-1,1,"vn20,vn101",10g,dual,eth1,server_2,xe-0/0/12
