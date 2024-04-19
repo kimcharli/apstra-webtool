@@ -158,10 +158,6 @@ class ApstraServer:
         self.status = self.apstra_server.last_error or "ok"
         if self.apstra_server.last_error:
             return self.apstra_server.version, self.apstra_server.last_error
-        # self.host = host
-        # self.port = port
-        # self.username = username
-        # self.password = password
         logging.warning(f"ApstraServer::login {ApstraServer=}")
         return self.apstra_server.version, "ok"    
 
@@ -180,15 +176,7 @@ async def login(button: ui.button) -> None:
     with disable(button):
         async with httpx.AsyncClient() as client:
             response = await client.get('http://localhost:8000/login')
-            # response = await client.post('http://localhost:8000/login', json={
-            #     'host': apstra_server.host,
-            #     'port': apstra_server.port,
-            #     'username': apstra_server.username,
-            #     'password': apstra_server.password,
-            # })
             ui.notify(f'Response code: {response.status_code}')
-
-
 
 
 
@@ -214,4 +202,3 @@ def content() -> None:
             ui.image('/public/login.svg').classes('rounded-full w-8 h-8 ml-4')
             # ui.button('Login', on_click=lambda: ui.notify('Login clicked')).classes('col-span-6 text-white bg-blue-500 border p-1')
     
-    ui.separator()
