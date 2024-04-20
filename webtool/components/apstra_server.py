@@ -182,6 +182,10 @@ async def login(button: ui.button) -> None:
 
 def content() -> None:
     global apstra_server
+    with ui.row().classes('w-full items-left gap-0'):
+        with ui.button(on_click=lambda e: login(e.sender)):
+            ui.label('Login Apstra Controller')
+            ui.image('/public/login.svg').classes('rounded-full w-8 h-8 ml-4')
     with ui.grid(columns=6).classes('w-full gap-0'):
         ui.label('Version').classes('font-bold border p-1')
         ui.label('Status').classes('font-bold border p-1')
@@ -197,8 +201,4 @@ def content() -> None:
         ui.input().classes('border p-1').bind_value(apstra_server, 'username')
         ui.input(password=True, password_toggle_button=True).classes('border p-1').bind_value(apstra_server, 'password')
 
-        with ui.button(on_click=lambda e: login(e.sender)):
-            ui.label('Login')
-            ui.image('/public/login.svg').classes('rounded-full w-8 h-8 ml-4')
-            # ui.button('Login', on_click=lambda: ui.notify('Login clicked')).classes('col-span-6 text-white bg-blue-500 border p-1')
     

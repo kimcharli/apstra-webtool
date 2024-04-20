@@ -3,10 +3,11 @@ from typing import Dict
 from nicegui import ui, events
 import logging
 import pandas as pd
+import numpy as np
 from io import StringIO
 
 from ck_apstra_api import generic_system
-from webtool.components import apstra_server
+from webtool.components.apstra_server import apstra_server
 
 
 the_columns = [
@@ -49,7 +50,8 @@ the_df = None
 def handle_csv_upload(e: events.UploadEventArguments) -> None:
     global the_columns, the_rows, the_ui_table, the_select_columns, the_df
     with StringIO(e.content.read().decode('utf-8')) as f:
-        the_df = pd.read_csv(f) 
+        # should replace NaN with None
+        the_df = pd.read_csv(f).replace(np.nan, None)
 
     ## verify the columns against the_columns
     columns=[{"name": col, "label": col, "field": col} for col in the_df.columns]
@@ -72,11 +74,11 @@ def handle_csv_upload(e: events.UploadEventArguments) -> None:
     #     column['headerClasses'] = '' if visible else 'hidden'
     #     the_table.update()
 
-    with ui.button('Columns', icon='menu'):
-        with ui.menu(), ui.column().classes('gap-0 p-2'):
-            for column in the_columns:
-                ui.switch(column['label'], value=True, on_change=lambda e,
-                        column=column: toggle(column, e.value))
+    # with ui.button('Columns', icon='menu'):
+    #     with ui.menu(), ui.column().classes('gap-0 p-2'):
+    #         for column in the_columns:
+    #             ui.switch(column['label'], value=True, on_change=lambda e,
+    #                     column=column: toggle(column, e.value))
 
     # if the_select_columns is not None:
     #     the_select_columns.delete()
@@ -118,16 +120,18 @@ def deploy() -> None:
             # bp_spec[gs_label] = [x for x in the_df[(the_df['blueprint'] == bp_label) & (the_df['system_label'] == gs_label)]]
             bp_spec[gs_label] = the_df[(the_df['blueprint'] == bp_label) & (the_df['system_label'] == gs_label)].to_dict('records')
     logging.warning(f"deploy {all_gs_spec=}")
-    generic_system.add_generic_system(apstra_server.apstra_server, all_gs_spec)
-    
+    _, error = generic_system.add_generic_system(apstra_server.apstra_server, all_gs_spec)
+    if error:
+        logging.error(f"deploy {error=}")    
  
 
 def content() -> None:
     global the_columns
-    with ui.row():
-        ui.label('Generic System')
+    with ui.row().classes('w-full items-left gap-0'):
+        # ui.label('Generic System').classes('text-2xl font-bold')
+        ui.button('Deploy Generic System', on_click=deploy)
+        ui.button('Download Sample', on_click=lambda: ui.download('/public/sample_generic_system.csv'))
+    with ui.row().classes('w-full items-left gap-0'):
         ui.upload(on_upload=handle_csv_upload, label="csv upload", auto_upload=True).props('accept=.csv')
         ui.button('Clear Table', on_click=clear_table)
-        ui.button('Download Sample', on_click=lambda: ui.download('/public/sample_generic_system.csv'))
-        ui.button('Deploy', on_click=deploy)
 
