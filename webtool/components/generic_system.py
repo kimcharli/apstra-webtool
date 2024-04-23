@@ -44,7 +44,23 @@ the_rows = []
 the_ui_table = None
 the_select_columns = None
 the_df = None
+the_log = None
 
+logger = logging.getLogger('generic_system')
+
+# class LogElementHandler(logging.Handler):
+#     """A logging handler that emits messages to a log element."""
+
+#     def __init__(self, element: ui.log, level: int = logging.NOTSET) -> None:
+#         self.element = element
+#         super().__init__(level)
+
+#     def emit(self, record: logging.LogRecord) -> None:
+#         try:
+#             msg = self.format(record)
+#             self.element.push(msg)
+#         except Exception:
+#             self.handleError(record)
 
 
 def handle_csv_upload(e: events.UploadEventArguments) -> None:
@@ -112,26 +128,38 @@ def clear_table() -> None:
 
 
 def deploy() -> None:
-    global the_df
+    global the_df, the_log
+    # the_log.push(f"deploy() begin")
     all_gs_spec = {}
     for bp_label in [x for x in the_df.groupby('blueprint').groups.keys()]:
         bp_spec = all_gs_spec[bp_label] = {}
         for gs_label in [x for x in the_df[the_df['blueprint'] == bp_label].groupby('system_label').groups.keys()]:
             # bp_spec[gs_label] = [x for x in the_df[(the_df['blueprint'] == bp_label) & (the_df['system_label'] == gs_label)]]
             bp_spec[gs_label] = the_df[(the_df['blueprint'] == bp_label) & (the_df['system_label'] == gs_label)].to_dict('records')
-    logging.warning(f"deploy {all_gs_spec=}")
-    _, error = generic_system.add_generic_system(apstra_server.apstra_server, all_gs_spec)
-    if error:
-        logging.error(f"deploy {error=}")    
+            this_gs_spec = { bp_label: { gs_label: bp_spec[gs_label] } }
+            logger.warning(f"deploy {this_gs_spec=}")
+            _, error = generic_system.add_generic_system(apstra_server.apstra_server, this_gs_spec)
+            if error:
+                logger.warning(f"deploy {error=}")    
+    # logging.warning(f"deploy {all_gs_spec=}")
+    # _, error = generic_system.add_generic_system(apstra_server.apstra_server, all_gs_spec)
+    # if error:
+    #     logging.error(f"deploy {error=}")    
  
 
 def content() -> None:
-    global the_columns
+    global the_columns, the_log
+    # with ui.row().classes('w-full items-left gap-0'):
+        # ui.label('Generic System').classes('text-2xl font-bold')
+        # ui.button('Deploy Generic System', on_click=deploy)
+    with ui.row().classes('w-full items-left gap-0'):
+        ui.upload(on_upload=handle_csv_upload, label="Upload CSV File for generic systems", auto_upload=True).props('accept=.csv')
+        ui.space()
+        ui.button('Download Sample', on_click=lambda: ui.download('/public/sample_generic_system.csv'))
+        # ui.button('Clear Table', on_click=clear_table)
     with ui.row().classes('w-full items-left gap-0'):
         # ui.label('Generic System').classes('text-2xl font-bold')
         ui.button('Deploy Generic System', on_click=deploy)
-        ui.button('Download Sample', on_click=lambda: ui.download('/public/sample_generic_system.csv'))
-    with ui.row().classes('w-full items-left gap-0'):
-        ui.upload(on_upload=handle_csv_upload, label="csv upload", auto_upload=True).props('accept=.csv')
-        ui.button('Clear Table', on_click=clear_table)
-
+    # the_log = ui.log().props().classes('w-full h-20')
+    # logger.addHandler(LogElementHandler(the_log))
+    # logger.warning("Begin logging")

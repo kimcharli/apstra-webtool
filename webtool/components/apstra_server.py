@@ -137,10 +137,10 @@ from ck_apstra_api.apstra_session import CkApstraSession
 
 @dataclass
 class ApstraServer:
-    host: str = '10.85.192.50'
+    host: str = '10.85.192.45'
     port: str = '443'
     username: str = 'admin'
-    password: str =  'zaq1@WSXcde3$RFV'
+    password: str =  'admin'
     logging_level = 'DEBUG'
     # apstra_server = None  # CkApstraSession
     version: str = 'NA'
