@@ -1,33 +1,41 @@
 
 [project]
 name = "apstra-webtool"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
-  'reactpy[fastapi]',
-  'ck-apstra-api',
+  'fastapi == 0.104.1',
+  'sse_starlette == 2.0.0',
+  'asyncio == 3.4.3',
+  'uvicorn[standard] == 0.24.0.post1',
+  'ck-apstra-api == 0.3.2',
 ]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 
 [project.scripts]
 #webtool = "webtool:hello_world"
 webtool = "webtool:main"
 
 
-[tool.poetry]
-name = "apstra-webtool"
-version = "0.0.1"
-description = "Webtool for Apstra"
-authors = ["Charlie Kim <kimcharli@gmail.com>"]
-license = "MIT"
-readme = "README.md"
+#[tool.poetry]
+#name = "apstra-webtool"
+#version = "0.0.2"
+#description = "Webtool for Apstra"
+#authors = ["Charlie Kim <kimcharli@gmail.com>"]
+#license = "MIT"
+#readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "<3.13,>=3.11"
-reactpy = {extras = ["fastapi"], version = "^1.0.2"}
-aiohttp = "^3.9.4"
-python-multipart = "^0.0.9"
-ck-apstra-api = "^0.2.21"
+#[tool.poetry.dependencies]
+#python = "<3.13,>=3.11"
+#aiohttp = "^3.9.4"
+#python-multipart = "^0.0.9"
+#ck-apstra-api = "^0.3.2"
 
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+#[build-system]
+#requires = ["poetry-core"]
+#build-backend = "poetry.core.masonry.api"

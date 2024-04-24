@@ -1,83 +1,65 @@
-from fastapi.staticfiles import StaticFiles
-from reactpy import component, html
-from reactpy.backend.fastapi import configure, Options
-from fastapi import Body, FastAPI, Request, UploadFile, Form
-import uvicorn
+import json
 import logging
-import os
-from typing import Annotated
-from pydantic import BaseModel
+import asyncio
 
-from webtool.components.apstra_server import ApstraServerComponent, ApstraServer
+from fastapi import FastAPI, HTTPException, Request, Form, WebSocket, Cookie, Query, WebSocketDisconnect
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+
+# from webtool.components.sse import sse_queue, sse_logging
 
 
-The_Title = os.environ.get('WEB_TITLE', "Apstra Webtool")
-# The_Title = "Apstra Webtool"
-options = Options
-the_title = [x for x in options.head if x['tagName'] == 'title']
-the_title[0]['children'] = [The_Title]
-
-# logging.error(f"after {options.head=}")
-
+logger = logging.getLogger('webtool.main')
 app = FastAPI()
-app.mount("/public", StaticFiles(directory="webtool/public"), name="public")
 
-config = uvicorn.Config(app, host='localhost', port=8001, log_level='debug', reload=True)
-
-
-
-# @app.middleware("http")
-# async def disect_request(request: Request, call_next):
-#     logging.warning(f"TRACING: request {request.url} {request.headers=}")
-#     body = await request.body()
-#     logging.warning(f"TRACING: request body {body=}")
-#     response = await call_next(request)
-#     logging.warning(f"TRACING: response {response}, {type(response)=}")
-#     return response
+app.mount("/static", StaticFiles(directory="webtool/static"), name="static")
+app.mount("/js", StaticFiles(directory="webtool/static/js"), name="js")
+app.mount("/css", StaticFiles(directory="webtool/static/css"), name="css")
+app.mount("/images", StaticFiles(directory="webtool/static/images"), name="images")
 
 
-class LoginData(BaseModel):
-    host: str
-    port: int
-    username: str
-    password: str
 
-@app.post("/login")
-# async def login(host: Annotated[str, Form()], port: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()]):
-async def login(login_data: LoginData):
-    """
-    login to the server
-    """
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    client_id = 1
+    await manager.connect(websocket)
     try:
-        logging.warning(f"login {login_data=}")
-        # async for chunk in request.stream():
-        #     print(chunk)
-        # logging.warning(f"login {host=} {port=} {username=} {password=}")
-        version, status = ApstraServer.login(login_data.host, login_data.port, login_data.username, login_data.password)
-        logging.warning(f"login {status=} {version=}")
-        return {"status": status, "version": version}
-    except Exception as e:
-        logging.error(f"login {e=}")
-        return {"status": str(e), "version": ""}
+        while True:
+            data = await websocket.receive_text()
+            d1 = json.loads(data)
+            logging.warning(f"######## websocket_endpoint {data=} {type(data)} {dir(data)=}")
+            if 'login' in d1:
+                logging.warning(f"######## websocket_endpoint {d1=} {type(d1)} {d1['login']=}")
+            await manager.send_personal_message(f"You wrote: {data=} {type(data)}", websocket)
+            await manager.broadcast(f"Client #{client_id} says: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast(f"Client #{client_id} left the chat")
 
 
-css_1 = html.link(
-        {
-        "rel": "stylesheet",
-        "href": "/public/style.css"
-        }
-    )
+@app.get("/", response_class=HTMLResponse)
+async def get_index_html(request: Request):
+    return FileResponse("webtool/static/index.html")
 
-@component
-def home():
-    return html.section(
-        css_1,
-        html.h1("Apstra Webtool"),
-        html.hr(),
-        ApstraServerComponent(),
-        html.hr(),
-        html.hr(),
-        )
 
-# configure(app, home, options)
-configure(app, home)
