@@ -1,6 +1,6 @@
 content = f"""
 // created by script
-const ws = new WebSocket("ws://localhost:8000/ws");
+const ws = new WebSocket("wss://localhost:8000/wss");
 
 ws.onopen = (event) => {{
     console.log('ws.onopen' + event);

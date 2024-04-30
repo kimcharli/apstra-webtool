@@ -1,8 +1,9 @@
 import json
 import logging
 import asyncio
+import ssl
 
-from fastapi import FastAPI, HTTPException, Request, Form, WebSocket, Cookie, Query, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -11,6 +12,8 @@ from webtool.components.apstra_server import apstra_server
 
 logger = logging.getLogger('webtool.main')
 app = FastAPI()
+# ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+# ssl_context.load_cert_chain("certs/cert.pem", "certs/key.pem")
 
 app.mount("/static", StaticFiles(directory="webtool/static"), name="static")
 # app.mount("/js", StaticFiles(directory="webtool/static/js"), name="js")
@@ -40,7 +43,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@app.websocket("/ws")
+@app.websocket("/wss")
 async def websocket_endpoint(websocket: WebSocket):
     client_id = 1
     await manager.connect(websocket)
@@ -71,19 +74,19 @@ async def websocket_endpoint(websocket: WebSocket):
         await manager.broadcast(f"Client #{client_id} left the chat")
 
 
-@app.get("/", response_class=HTMLResponse)
-async def get_index_html(request: Request):
+@app.get("/")
+async def get_index_html():
     from webtool.pages import index_html
     return PlainTextResponse(index_html.content.strip('\n'), media_type="text/html")
 
 
-@app.get("/css/style.css", response_class=HTMLResponse)
-async def get_style_css(request: Request):
+@app.get("/css/style.css")
+async def get_style_css():
     from webtool.pages import style_css
     return PlainTextResponse(style_css.content.strip('\n'), media_type="text/css")
 
-@app.get("/js/main.js", response_class=HTMLResponse)
-async def get_main_js(request: Request):
+@app.get("/js/main.js")
+async def get_main_js():
     from webtool.pages import main_js
     return PlainTextResponse(main_js.content.strip('\n'), media_type="text/javascript")
 
