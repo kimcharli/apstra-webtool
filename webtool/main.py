@@ -3,7 +3,7 @@ import logging
 import asyncio
 
 from fastapi import FastAPI, HTTPException, Request, Form, WebSocket, Cookie, Query, WebSocketDisconnect
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 # from webtool.components.sse import sse_queue, sse_logging
@@ -13,8 +13,8 @@ logger = logging.getLogger('webtool.main')
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="webtool/static"), name="static")
-app.mount("/js", StaticFiles(directory="webtool/static/js"), name="js")
-app.mount("/css", StaticFiles(directory="webtool/static/css"), name="css")
+# app.mount("/js", StaticFiles(directory="webtool/static/js"), name="js")
+# app.mount("/css", StaticFiles(directory="webtool/static/css"), name="css")
 app.mount("/images", StaticFiles(directory="webtool/static/images"), name="images")
 
 
@@ -73,6 +73,17 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/", response_class=HTMLResponse)
 async def get_index_html(request: Request):
-    return FileResponse("webtool/static/index.html")
+    from webtool.pages import index_html
+    return PlainTextResponse(index_html.content.strip('\n'), media_type="text/html")
 
+
+@app.get("/css/style.css", response_class=HTMLResponse)
+async def get_style_css(request: Request):
+    from webtool.pages import style_css
+    return PlainTextResponse(style_css.content.strip('\n'), media_type="text/css")
+
+@app.get("/js/main.js", response_class=HTMLResponse)
+async def get_main_js(request: Request):
+    from webtool.pages import main_js
+    return PlainTextResponse(main_js.content.strip('\n'), media_type="text/javascript")
 

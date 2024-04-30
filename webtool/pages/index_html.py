@@ -1,3 +1,5 @@
+
+content = f"""
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,3 +49,4 @@
 </body>
 
 </html>
+"""
