@@ -42,7 +42,9 @@ INFO:     Application startup complete.
 ```
 
 
-Open browser: https://127.0.0.1:8000 
+Open browser: <a href="https://127.0.0.1:8000" target="_blank">https://127.0.0.1:8000</a>
+
+
 
 # TODO
 
