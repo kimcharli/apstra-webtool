@@ -7,7 +7,8 @@ dependencies = [
   'sse_starlette == 2.0.0',
   'asyncio == 3.4.3',
   'uvicorn[standard] == 0.24.0.post1',
-  'ck-apstra-api == 0.3.2',
+#  'ck-apstra-api == 0.3.2',
+  'ck-apstra-api @ file:////Users/ckim/Documents/Projects/ck-apstra-api',
 ]
 
 

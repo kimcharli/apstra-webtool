@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 # from webtool.components.sse import sse_queue, sse_logging
-
+from webtool.components.apstra_server import apstra_server
 
 logger = logging.getLogger('webtool.main')
 app = FastAPI()
@@ -46,13 +46,26 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            data = await websocket.receive_text()
-            d1 = json.loads(data)
-            logging.warning(f"######## websocket_endpoint {data=} {type(data)} {dir(data)=}")
-            if 'login' in d1:
-                logging.warning(f"######## websocket_endpoint {d1=} {type(d1)} {d1['login']=}")
-            await manager.send_personal_message(f"You wrote: {data=} {type(data)}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
+            data_in = await websocket.receive_json()
+            # data = await websocket.receive_text()
+            # data_dict = json.loads(data)
+            match data_in['command']:
+                case 'login':
+                    logging.warning(f"######## websocket_endpoint {data_in=} {type(data_in)}")
+                    version, status = apstra_server.login(data_in)
+                    logging.warning(f"######## websocket_endpoint {version=} {status=}")
+                    data_out = {'type': 'id-prop-value', 
+                        'data': [ 
+                            {'id': 'apstra-version', 'value': version, 'prop': 'innerHTML', 'attrs': [ {'name': 'data-state', 'value': 'done' }, {'name': 'class', 'value': 'data-state' } ] },
+                            {'id': 'apstra-status', 'value': status, 'prop': 'innerHTML', 'attrs': [ {'name': 'data-state', 'value': 'done' }, {'name': 'class', 'value': 'data-state' } ]}
+                          ]}
+                    await websocket.send_json(data_out)
+                case _:
+                    logging.warning(f"######## websocket_endpoint {data_in=} {type(data_in)} {dir(data_in)=}")
+            # if 'login' in d1:
+            #     logging.warning(f"######## websocket_endpoint {d1=} {type(d1)} {d1['login']=}")
+            # await manager.send_personal_message(f"You wrote: {data=} {type(data)}", websocket)
+            # await manager.broadcast(f"Client #{client_id} says: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast(f"Client #{client_id} left the chat")

@@ -31,15 +31,16 @@
                     <th>password</th>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
+                    <td id="apstra-version"></td>
+                    <td id="apstra-status"></td>
                     <td><input type="text" id="apstra-host" name="host" value="10.85.192.45"></td>
                     <td><input type="text" id="apstra-port" name="port" value="443"></td>
                     <td><input type="text" id="apstra-username" name="username" value="admin"></td>
                     <td><input type="password" id="apstra-password" name="password" value="admin"></td>
                 </tr>
             </table>
-            <button onclick="connect(event)">Login</button>
+            <input type="hidden" name="command" value="login">
+            <button onclick="send_form(event)">Login</button>
         </form>
     </div>
 
