@@ -3,10 +3,16 @@
 
 # setup
 
+## install
 ```sh
-uv venv
-source .venv/bin/activate
-peoety install
+git clone https://github.com/kimcharli/apstra-webtool.git
+cd apstra-webtool
+scripts/re-venv.sh
+```
+
+## generated self signed certificate
+```sh
+scripts/re-selfsigned.sh
 ```
 
 
@@ -14,8 +20,7 @@ peoety install
 
 
 ```sh
-source .venv/bin/activate
-python -m uvicorn webtool.main:app --reload
+scripts/start.sh
 ```
 
 
@@ -35,8 +40,8 @@ python -m webtool
 
 
 # misc
-
 ```
+
 poetry new rp-poetry [--name rp-poetry]
 cd rp-poetry
 poetry env info --path
