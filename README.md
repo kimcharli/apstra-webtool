@@ -84,3 +84,21 @@ poetry run python -q
 WEB_TITLE = "Apstra Webtool!"
 ```
 
+
+# initial setup
+
+```sh
+poetry init
+poetry add ruff -G dev
+```
+
+## setup frontend with vite-react-swc
+
+```sh
+nvm use v20.13.1
+npm create vite frontend -- template react-swc 
+(create-vite@5.2.3, React, JavaScript + SWC)
+cd frontend
+npm install
+npm run dev
+```
