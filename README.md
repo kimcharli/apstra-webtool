@@ -101,4 +101,6 @@ npm create vite frontend -- template react-swc
 cd frontend
 npm install
 npm run dev
+
+npm run build
 ```
