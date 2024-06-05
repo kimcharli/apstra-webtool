@@ -6,9 +6,13 @@ authors = ["Charlie Kim <kimcharli@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
+[tool.poetry.scripts]
+webtool = "webtool.main:main"
+
 [tool.poetry.dependencies]
 python = "^3.11"
-
+fastapi = "^0.111.0"
+python-socketio = "^5.11.2"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.5"

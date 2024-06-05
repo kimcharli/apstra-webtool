@@ -69,7 +69,8 @@ cd rp-poetry
 poetry env info --path
 poetry env list
 poetry config --list
-poetry add requests beautifulsoup4
+# poetry add requests beautifulsoup4 fastapi-socketio
+poetry add requests beautifulsoup4 python-socketio
 poetry install
 poetry run python -c "import requests"
 poetry run python -q
@@ -99,6 +100,8 @@ nvm use v20.13.1
 npm create vite frontend -- template react-swc 
 (create-vite@5.2.3, React, JavaScript + SWC)
 cd frontend
+npm install socket.io-client
+# npm install socket.io 
 npm install
 npm run dev
 

@@ -6,6 +6,9 @@ from typing import Any, Optional, Tuple
 import logging
 
 from ck_apstra_api.apstra_session import CkApstraSession
+from webtool.components.socket import sio
+
+logger = logging.getLogger('apstra_server')
 
 
 @dataclass
@@ -19,7 +22,7 @@ class ApstraServer:
     version: str = 'NA'
     status: str = 'not connected'
 
-    def login(self, data: dict):
+    async def login(self, data: dict):
         """
         Login to the ApstraServer and return version and the error message
         """
@@ -36,7 +39,29 @@ class ApstraServer:
         logging.warning(f"ApstraServer::login {ApstraServer=}")
         return self.apstra_server.version, "ok"    
 
+    async def logout(self):
+        """
+        Logout from the ApstraServer
+        """
+        self.apstra_server.logout()
+        self.status = 'not connected'
+        logging.warning(f"ApstraServer::logout {ApstraServer=}")
+
 # global variable
 apstra_server = ApstraServer()
 
+@sio.on('login')
+async def login(sid, login_data):
+    logger.warning(f"login begin: {sid} connected, {login_data=}")
+    version, status = await apstra_server.login(login_data)
+    await sio.emit('login', {'version': version, 'status': status}, room=sid)
+    logger.warning(f"login end: {sid} connected, {login_data=}")
+
+
+@sio.on('logout')
+async def logout(sid):
+    logger.warning(f"logout begin: {sid} connected")
+    await apstra_server.logout()
+    await sio.emit('logout', {'status': 'ok'}, room=sid)
+    logger.warning(f"logout end: {sid} connected")
 
