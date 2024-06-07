@@ -1,7 +1,7 @@
 // import React, { useState } from 'react';
 import './ApstraServer.css';
 import { useState } from 'react';
-import { socket } from '../socket';
+import { socket, socketEnum } from '../socket';
 
 export default function ApstraServer() {
   const [version, setVersion] = useState('0.0.0');
@@ -18,14 +18,14 @@ export default function ApstraServer() {
     // Simulate connection logic
     if (host && port && username && password) {
       if (loginAction === 'Login') {
-        socket.emit('login', { host, port, username, password });
-        socket.on('login', (data) => {
+        socket.emit(socketEnum.LOGIN, { host, port, username, password });
+        socket.on(socketEnum.LOGIN, (data) => {
           setVersion(data.version);
           setStatus(data.status);
         });
         setLoginAction('Logout');
       } else {
-        socket.emit('logout');
+        socket.emit(socketEnum.LOGOUT);
         setVersion('0.0.0');
         setStatus('Disconnected');
         setLoginAction('Login');

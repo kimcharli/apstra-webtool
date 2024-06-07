@@ -6,6 +6,15 @@ import { io } from 'socket.io-client';
 
 const URL = 'https://localhost:8083';
 
+export const socketEnum = {
+    CONNECT: 'connect',
+    DISCONNECT: 'disconnect',
+    LOGIN: 'login',
+    LOGOUT: 'logout',
+    SEND_MSG: 'send_msg',
+};
+
+
 // export const socket = io(URL);
 export const socket = io(URL, {
     transports: ['websocket', 'polling', 'flashsocket'],

@@ -8,6 +8,7 @@ from fastapi.responses import HTMLResponse, FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from webtool.components.socket import sio, socket_app
+from webtool.components.apstra_server import apstra_server
 
 logger = logging.getLogger('webtool.main')
 app = FastAPI()
@@ -22,14 +23,6 @@ app.mount("/static", StaticFiles(directory="webtool/static"), name="static")
 # app.mount("/css", StaticFiles(directory="webtool/static/css"), name="css")
 app.mount("/images", StaticFiles(directory="webtool/static/images"), name="images")
 
-
-@sio.on('connect')
-async def connect(sid, environ):
-    logger.warning(f"Client {sid} connected")
-
-@sio.on('disconnect')
-async def disconnect(sid):
-    logger.warning(f"Client {sid} disconnected")
 
 @sio.on('create-something')
 async def create_something(sid, data):
