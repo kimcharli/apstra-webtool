@@ -1,0 +1,8 @@
+.gs-box {
+    outline: 2px solid green;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
