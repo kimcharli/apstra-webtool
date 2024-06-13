@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from webtool.components.socket import sio, socket_app
 from webtool.components.apstra_server import apstra_server
+from webtool.components.generic_system import generic_system
 
 logger = logging.getLogger('webtool.main')
 app = FastAPI()
@@ -24,24 +25,8 @@ app.mount("/static", StaticFiles(directory="webtool/static"), name="static")
 app.mount("/images", StaticFiles(directory="webtool/static/images"), name="images")
 
 
-@sio.on('create-something')
-async def create_something(sid, data):
-    logger.warning(f"Client {sid} created something: {data}")
-    await sio.emit('something-created', data)
-
-@sio.on('msg')
-async def handle_msg(sid, data):
-    logger.warning(f"handle_msg({sid},{data})")
-    await sio.emit('msg', data)
-
-@sio.on('send_msg')
-async def handle_send_msg(sid, data):
-    logger.warning(f"handle_send_msg({sid}, {data})")
-    await sio.emit('msg', data)
-
 
 @app.get("/")
-
 async def get_index_html():
     from webtool.pages import index_html
     return PlainTextResponse(index_html.content.strip('\n'), media_type="text/html")

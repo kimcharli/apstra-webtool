@@ -12,6 +12,7 @@ export const socketEnum = {
     LOGIN: 'login',
     LOGOUT: 'logout',
     SEND_MSG: 'send_msg',
+    GS_SAMPLE: 'gs_sample',
 };
 
 

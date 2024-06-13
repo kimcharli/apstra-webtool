@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Papa from "papaparse";
+import { socket, socketEnum } from "../socket";
 import "./GenericSystem.css";
 
 
@@ -8,6 +9,17 @@ const Ids = Object.freeze({
     BTN_PARSE: "parse-csv",
     TBL_HEADER: "table-header",
     TBL_BODY: "table-body",
+});
+
+// put this out of the GenericSystem component. Otherwise, it may trigger twice
+socket.on(socketEnum.GS_SAMPLE, (data) => {
+    console.log("socket.on(GS_SAMPLE)", data);
+    const element = document.createElement('a');
+    const file = new Blob([data.file_content], {type: 'text/csv'});
+    element.href = URL.createObjectURL(file);
+    element.download = 'gs_sample.csv';
+    // document.body.appendChild(element);
+    element.click();
 });
 
 
@@ -22,6 +34,9 @@ const GenericSystem = () => {
  
     // It will store the file uploaded by the user
     const [file, setFile] = useState("");
+
+    // const uploadRef = useRef(null);
+    // const parseRef = useRef(null);
 
     // const gsTable = document.getElementById(Ids.GS_TABLE);
     // const parseButton = document.getElementById(Ids.BTN_PARSE);
@@ -42,6 +57,7 @@ const GenericSystem = () => {
         // document.getElementById(Ids.BTN_PARSE).click();
         // parseButton.click();
         // gsTable.deleteTHead();
+        // parseRef.current.click();
     };
 
 
@@ -68,6 +84,12 @@ const GenericSystem = () => {
         createDataElement("td", cellText, "row" + rowIndex); 
     }
 
+    const requestSample = async () => {
+        socket.emit(socketEnum.GS_SAMPLE, {});
+    };
+
+ 
+
 
     const handleParse = (e) => {
      
@@ -76,6 +98,7 @@ const GenericSystem = () => {
         // a file we show a error
         if (!file) return alert("Enter a valid file");
  
+        // uploadRef.current.click();
         // Initialize a reader which allows user
         // to read any file or blob.
         const reader = new FileReader();
@@ -118,10 +141,16 @@ const GenericSystem = () => {
                 name="file"
                 type="file"
                 accept=".csv"
+                // ref={uploadRef}
+                // hidden
             />
             <div>
+                {/* <a href="/gs_sample" download="gs_sample.csv">Download Sample</a> */}
+                <button id="gs_sample" onClick={requestSample}>
+                    Download CSV Sample
+                </button>
                 <button id={Ids.BTN_PARSE} onClick={handleParse}>
-                    Load
+                    Parse CSV
                 </button>
             </div>
             <table id={Ids.GS_TABLE}>
